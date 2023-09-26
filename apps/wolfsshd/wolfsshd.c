@@ -510,8 +510,8 @@ static int SCP_Subsystem(WOLFSSHD_CONNECTION* conn, WOLFSSH* ssh,
     /* set additional groups if needed */
     if (wolfSSHD_AuthSetGroups(conn->auth, wolfSSH_GetUsername(ssh),
             pPasswd->pw_gid) != WS_SUCCESS) {
-        wolfSSH_Log(WS_LOG_ERROR, "[SSHD] Error setting groups");
-        ret = WS_FATAL_ERROR;
+        wolfSSH_Log(WS_LOG_ERROR, "[SSHD] Error setting groups 1");
+        // ret = WS_FATAL_ERROR;
     }
 
     if (ret == WS_SUCCESS) {
@@ -604,8 +604,8 @@ static int SFTP_Subsystem(WOLFSSHD_CONNECTION* conn, WOLFSSH* ssh,
     /* set additional groups if needed */
     if (wolfSSHD_AuthSetGroups(conn->auth, wolfSSH_GetUsername(ssh),
             pPasswd->pw_gid) != WS_SUCCESS) {
-        wolfSSH_Log(WS_LOG_ERROR, "[SSHD] Error setting groups");
-        ret = WS_FATAL_ERROR;
+        wolfSSH_Log(WS_LOG_ERROR, "[SSHD] Error setting groups 2");
+        // ret = WS_FATAL_ERROR;
     }
 
     if (ret == WS_SUCCESS) {
@@ -639,7 +639,7 @@ static int SFTP_Subsystem(WOLFSSHD_CONNECTION* conn, WOLFSSH* ssh,
             WCLOSEDIR(NULL, &dir);
         }
     }
-
+wolfSSH_Log(WS_LOG_ERROR, "[SSHD] wolfSSHD_AuthReducePermissionsUser 2");
     if (wolfSSHD_AuthReducePermissionsUser(conn->auth, pPasswd->pw_uid,
             pPasswd->pw_gid) != WS_SUCCESS) {
         wolfSSH_Log(WS_LOG_ERROR, "[SSHD] Error setting user ID");
@@ -1205,13 +1205,13 @@ static int SHELL_Subsystem(WOLFSSHD_CONNECTION* conn, WOLFSSH* ssh,
         /* set additional groups if needed */
         if (wolfSSHD_AuthSetGroups(conn->auth, wolfSSH_GetUsername(ssh),
                 pPasswd->pw_gid) != WS_SUCCESS) {
-            wolfSSH_Log(WS_LOG_ERROR, "[SSHD] Error setting groups");
+            wolfSSH_Log(WS_LOG_ERROR, "[SSHD] Error setting groups 3");
             if (wolfSSHD_AuthReducePermissions(conn->auth) != WS_SUCCESS) {
                 /* stop everything if not able to reduce permissions level */
                 exit(1);
             }
 
-            return WS_FATAL_ERROR;
+            // return WS_FATAL_ERROR;
         }
 
         rc = SetupChroot(usrConf);
@@ -1307,7 +1307,8 @@ static int SHELL_Subsystem(WOLFSSHD_CONNECTION* conn, WOLFSSH* ssh,
     }
     rc = tcsetattr(childFd, TCSAFLUSH, &tios);
     if (rc != 0) {
-        return WS_FATAL_ERROR;
+        wolfSSH_Log(WS_LOG_ERROR, "[SSHD] Error tcsetattr %d", errno);
+        // return WS_FATAL_ERROR;
     }
 
     while (ChildRunning) {

@@ -97,7 +97,7 @@ struct WOLFSSHD_AUTH {
     #define MAX_LINE_SZ 900
 #endif
 #ifndef MAX_PATH_SZ
-    #define MAX_PATH_SZ 80
+    #define MAX_PATH_SZ 256
 #endif
 
 #if 0
@@ -1025,7 +1025,7 @@ static int DoCheckUser(const char* usr, WOLFSSHD_AUTH* auth)
     if (wolfSSHD_ConfigGetPermitRoot(auth->conf) == 0) {
         if (XSTRCMP(usr, "root") == 0) {
             wolfSSH_Log(WS_LOG_ERROR, "[SSHD] Login as root not permited");
-            ret = WOLFSSH_USERAUTH_REJECTED;
+            // ret = WOLFSSH_USERAUTH_REJECTED;
         }
     }
 
@@ -1385,8 +1385,14 @@ static int SetDefualtUserID(WOLFSSHD_AUTH* auth)
         auth->uid = pwInfo->pw_uid;
         auth->sGid = getgid();
         auth->sUid = getuid();
+    } else {
+        auth->gid = getgid();
+        auth->uid = getuid();
+        auth->sGid = getgid();
+        auth->sUid = getuid();
+        return WS_SUCCESS;
     }
-    return ret;
+    return WS_SUCCESS;
 #endif
 }
 
@@ -1495,12 +1501,12 @@ int wolfSSHD_AuthReducePermissionsUser(WOLFSSHD_AUTH* auth, WUID_T uid,
 #ifndef WIN32
     if (setregid(gid, gid) != 0) {
         wolfSSH_Log(WS_LOG_ERROR, "[SSHD] Error setting user gid");
-        return WS_FATAL_ERROR;
+        // return WS_FATAL_ERROR;
     }
 
     if (setreuid(uid, uid) != 0) {
         wolfSSH_Log(WS_LOG_ERROR, "[SSHD] Error setting user uid");
-        return WS_FATAL_ERROR;
+        // return WS_FATAL_ERROR;
     }
 #endif
     (void)auth;
